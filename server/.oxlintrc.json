@@ -1,5 +1,23 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "oxc", "node"],
-  "ignorePatterns": ["drizzle/**"]
+  "ignorePatterns": ["drizzle/**"],
+  "overrides": [
+    {
+      "files": ["src/ai/**", "src/routes/ai.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/integrations/oura/**", "**/fixtures/oura/**", "**/plan/adapt*", "**/plan/service*"],
+                "message": "Oura data (and anything derived from it) must never reach an AI model: CLAUDE.md and the Oura API agreement. See src/ai/boundary.test.ts."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }
