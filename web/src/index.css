@@ -1,0 +1,720 @@
+:root {
+  --bg: #f6f6f3;
+  --surface: #ffffff;
+  --text: #1b1c20;
+  --muted: #676b74;
+  --border: #e2e2dc;
+  --accent: #2b62d9;
+  --accent-text: #ffffff;
+  --ok: #17733f;
+  --ok-bg: #e3f3e9;
+  --warn: #8f5200;
+  --warn-bg: #fcefd8;
+  --danger: #b4291f;
+  --danger-bg: #fbe8e5;
+  /* Charts: one series in the accent, flagged values in the warning color. */
+  --chart-line: var(--accent);
+  --chart-flag: var(--warn);
+  --chart-band: rgb(103 107 116 / 0.12);
+  --chart-grid: #eeeee9;
+  /*
+   * Ramps for the Oura charts, built in OKLCH at the accent's hue and at an orange, then checked
+   * as ordinal ramps (one hue, even lightness steps, the lightest at 2:1 on the surface). Low to
+   * high: deeper sleep, more activity, more resilience. Dark mode flips them so more is brighter.
+   */
+  --sleep-awake: #74a2fe;
+  --sleep-rem: #5387f2;
+  --sleep-light: #3c6ed7;
+  --sleep-deep: #0f3ca1;
+  --activity-nonwear: #d6d6d0;
+  --activity-rest: #f18336;
+  --activity-inactive: #d56a10;
+  --activity-low: #b45700;
+  --activity-medium: #924500;
+  --activity-high: #723400;
+  /* Three workout intensities, spread across the orange ramp so neighbors stay apart. */
+  --intensity-easy: #f18336;
+  --intensity-moderate: #b45700;
+  --intensity-hard: #723400;
+  --level-1: #74a2fe;
+  --level-2: #5387f2;
+  --level-3: #3c6ed7;
+  --level-4: #2655bc;
+  --level-5: #0f3ca1;
+  /* Heatmap bins, low to high; the lowest may fade toward the surface. */
+  --seq-1: #c4d8ff;
+  --seq-2: #9cbeff;
+  --seq-3: #74a2fe;
+  --seq-4: #5387f2;
+  --seq-5: #3c6ed7;
+  --seq-6: #2655bc;
+  /* Opposites with a neutral between: stress against recovery. */
+  --diverge-warm: #d56a10;
+  --diverge-neutral: #d6d6d0;
+  --diverge-cool: #3c6ed7;
+  /*
+   * Plan weeks: building weeks against lighter ones (recovery, taper). Two steps of the accent
+   * ramp, checked with the dataviz palette validator in each mode.
+   */
+  --plan-week: #2655bc;
+  --plan-light-week: #74a2fe;
+  --radius: 10px;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Consolas, monospace;
+
+  color-scheme: light dark;
+  font: 16px/1.5 var(--sans);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141519;
+    --surface: #1c1d22;
+    --text: #ececef;
+    --muted: #9a9ea8;
+    --border: #2d2f36;
+    --accent: #6d97f2;
+    --accent-text: #0d1220;
+    --ok: #7fd1a0;
+    --ok-bg: #173323;
+    --warn: #f2c36b;
+    --warn-bg: #3a2c12;
+    --danger: #f19188;
+    --danger-bg: #3d1c19;
+    /* The accent one step darker: lines at the accent's lightness glare on the dark surface. */
+    --chart-line: #628ce6;
+    --chart-band: rgb(154 158 168 / 0.14);
+    --chart-grid: #26272d;
+    --sleep-awake: #2655bc;
+    --sleep-rem: #3c6ed7;
+    --sleep-light: #5387f2;
+    --sleep-deep: #9cbeff;
+    --activity-nonwear: #3d3f47;
+    --activity-rest: #924500;
+    --activity-inactive: #b45700;
+    --activity-low: #d56a10;
+    --activity-medium: #f18336;
+    --activity-high: #ffa56d;
+    --intensity-easy: #924500;
+    --intensity-moderate: #d56a10;
+    --intensity-hard: #ffa56d;
+    --level-1: #2655bc;
+    --level-2: #3c6ed7;
+    --level-3: #5387f2;
+    --level-4: #74a2fe;
+    --level-5: #9cbeff;
+    --seq-1: #0f3ca1;
+    --seq-2: #2655bc;
+    --seq-3: #3c6ed7;
+    --seq-4: #5387f2;
+    --seq-5: #74a2fe;
+    --seq-6: #9cbeff;
+    --diverge-neutral: #3d3f47;
+    --diverge-cool: #5387f2;
+    --plan-week: #5387f2;
+    --plan-light-week: #2655bc;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  margin: 0;
+}
+
+h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.125rem;
+}
+
+h3 {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 1rem 0 0.5rem;
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.875em;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.brand {
+  font-weight: 650;
+}
+
+.nav {
+  display: flex;
+  flex: 1;
+  gap: 0.25rem;
+}
+
+.nav a {
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 550;
+  text-decoration: none;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: var(--text);
+}
+
+.nav a.active {
+  background: var(--bg);
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+
+  /* Stays beside the brand, shortening the email, instead of wrapping onto a row of its own. */
+  .account {
+    flex: 1 1 0;
+    justify-content: flex-end;
+  }
+
+  /* Own row under the brand, text lined up with it. */
+  .nav {
+    order: 1;
+    flex-basis: 100%;
+    margin: 0 -0.65rem;
+  }
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.account > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The email gives way first. */
+.account > .button {
+  flex-shrink: 0;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.page.narrow {
+  max-width: 520px;
+  padding-top: 15vh;
+}
+
+.lede {
+  color: var(--muted);
+  margin: 0 0 1.5rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 0.875rem;
+}
+
+.cards {
+  display: grid;
+  /* minmax(0, …): a wide child scrolls or wraps inside its card instead of widening the page. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.card > p {
+  margin: 0.5rem 0 0;
+}
+
+.card-header,
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.panel {
+  margin-top: 1rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.panel-header h3 {
+  margin-bottom: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 550;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.button.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--surface);
+}
+
+.page.narrow .button.primary {
+  margin: 0.5rem 0 1rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.pill.ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.pill.warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.pill .icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  margin: 0.75rem 0 1rem;
+  background: var(--ok-bg);
+  color: var(--ok);
+  font-size: 0.875rem;
+}
+
+.notice.error {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.notice.warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+}
+
+.facts dt {
+  color: var(--muted);
+}
+
+.facts dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.875rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.35rem 0.5rem 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  color: var(--muted);
+  font-weight: 550;
+}
+
+.table .pill {
+  margin-left: 0.4rem;
+  padding: 0 0.45rem;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+details summary {
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+pre {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 0.75rem;
+  overflow: auto;
+  max-height: 320px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+}
+
+.segmented button {
+  padding: 0.3rem 0.75rem;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.segmented button:hover,
+.segmented button[aria-pressed='true'] {
+  color: var(--text);
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+@media (max-width: 640px) {
+  /* Keeps "Sync now" on the same row on phones. */
+  .segmented button {
+    padding: 0.3rem 0.55rem;
+  }
+}
+
+/* While a refetch runs, the previous charts stay put, dimmed. */
+.refreshing {
+  opacity: 0.6;
+}
+
+.chart-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.chart-key li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chart-key svg {
+  overflow: visible;
+}
+
+/* A metric's figures beside its chart; stacked on narrow screens. */
+.metric-row {
+  display: grid;
+  grid-template-columns: 10.5rem minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.metric-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+@media (max-width: 640px) {
+  .metric-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Label and value on the left, status and dates on the right, so the chart starts sooner. */
+  .metric-stat {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.25rem 1rem;
+    align-items: center;
+  }
+
+  .metric-stat .stat-value {
+    grid-row: 2 / span 2;
+  }
+
+  .metric-stat .pill,
+  .metric-stat .small {
+    grid-column: 2;
+    justify-self: end;
+    text-align: right;
+  }
+
+  .metric-stat .pill {
+    grid-row: 1;
+  }
+}
+
+.metric-stat p,
+.stat-tile p {
+  margin: 0;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 650;
+  line-height: 1.1;
+}
+
+.stat-value .unit {
+  margin-left: 0.3rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.trend-chart {
+  min-width: 0;
+  /* The chart's full height, axis labels included, so nothing shifts once it's measured. */
+  min-height: 144px;
+  border-radius: 6px;
+}
+
+.trend-chart:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.trend-chart.empty {
+  display: grid;
+  place-items: center;
+}
+
+.trend-chart svg {
+  display: block;
+  overflow: visible;
+  /* Horizontal drags scrub the crosshair; vertical ones still scroll the page. */
+  touch-action: pan-y;
+}
+
+.trend-chart .grid line,
+.time-chart .grid line {
+  stroke: var(--chart-grid);
+}
+
+.trend-chart text,
+.time-chart text {
+  fill: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.trend-chart.selectable svg {
+  cursor: pointer;
+}
+
+.trend-band {
+  fill: var(--chart-band);
+}
+
+.trend-line {
+  fill: none;
+  stroke: var(--chart-line);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.crosshair {
+  stroke: var(--muted);
+}
+
+/* The stroke paints first and shows only outside the fill: a 2px ring in the surface color. */
+.marker {
+  fill: var(--chart-line);
+  stroke: var(--surface);
+  stroke-width: 4;
+  paint-order: stroke;
+}
+
+.marker.flagged {
+  fill: var(--chart-flag);
+}
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.stat-tile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.stat-tile .stat-value {
+  font-size: 1.5rem;
+}
+
+.sparkline {
+  height: 32px;
+  margin: 0.25rem 0;
+}
+
+.sparkline svg {
+  display: block;
+  overflow: visible;
+}
+
+.sparkline-line {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sparkline-dot {
+  fill: var(--chart-line);
+  stroke: var(--surface);
+  stroke-width: 3;
+  paint-order: stroke;
+}
