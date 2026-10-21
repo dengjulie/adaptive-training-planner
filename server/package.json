@@ -11,6 +11,7 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed:demo": "node --env-file-if-exists=../.env src/scripts/seed-demo.ts",
     "db:studio": "drizzle-kit studio",
     "job:daily": "node --env-file-if-exists=../.env src/jobs/daily.ts"
   },

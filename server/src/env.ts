@@ -31,6 +31,10 @@ const EnvSchema = z.object({
   // The mcp.coros.com gateway advertises mcpus as its resource, which MCP clients reject.
   COROS_MCP_URL: z.url().default('https://mcpus.coros.com/mcp'),
   COROS_REDIRECT_URI: z.url().optional(),
+
+  // Development only: enables /auth/demo and synthetic COROS runs for the demo user that
+  // `npm run db:seed:demo` creates, so the app can be tried without real accounts or data.
+  DEMO_MODE: z.stringbool().default(false),
 })
 
 function loadEnv() {
@@ -41,6 +45,9 @@ function loadEnv() {
     throw new Error(
       `Invalid environment configuration (see .env.example):\n${z.prettifyError(result.error)}`,
     )
+  }
+  if (result.data.DEMO_MODE && result.data.NODE_ENV === 'production') {
+    throw new Error('DEMO_MODE signs anyone in as the demo user; it must be off in production.')
   }
   return result.data
 }

@@ -25,7 +25,7 @@ import { trendDays } from '../integrations/oura/baseline.ts'
 import { getStoredOuraDays } from '../integrations/oura/sync.ts'
 import { getConnection } from '../lib/connections.ts'
 import { sha256 } from '../lib/crypto.ts'
-import { addDays, todayIn, zonedInstant, type IsoDate } from '../lib/dates.ts'
+import { addDays, todayIn, zonedInstant, type IsoDate, type Weekday } from '../lib/dates.ts'
 import { loadActivitiesOrNull } from './activities.ts'
 import { adaptDay, applyAdjustments, type EffectiveSession } from './adapt.ts'
 import { baselineStart, corosBaseline } from './baseline.ts'
@@ -54,6 +54,11 @@ export async function getActiveGoal(userId: string): Promise<GoalRow | undefined
     .where(and(eq(goals.userId, userId), eq(goals.status, 'active')))
   return goal
 }
+
+const patternOf = (goal: Pick<GoalRow, 'timeWindows' | 'longRunWeekday'>) => ({
+  trainingDays: goal.timeWindows.map((w) => w.weekday as Weekday),
+  longRunWeekday: goal.longRunWeekday as Weekday,
+})
 
 type Executor = Db | Transaction
 
@@ -128,7 +133,7 @@ async function busyBetween(user: User, from: IsoDate, to: IsoDate): Promise<Inte
 export async function createGoal(user: User, goal: Goal, { startDay }: { startDay?: IsoDate } = {}) {
   const today = todayIn(user.timezone)
   const start = startDay ?? today
-  const activities = await loadActivitiesOrNull(user, baselineStart(start), today)
+  const activities = await loadActivitiesOrNull(user, baselineStart(start), today, patternOf(goal))
   const baseline = activities ? corosBaseline(activities, start) : null
   const plan = generatePlan(goal, baseline, start)
 
@@ -332,7 +337,7 @@ export async function runMorning(
   const recent =
     activities !== undefined
       ? activities
-      : await loadActivitiesOrNull(user, addDays(today, -MATCH_LOOKBACK_DAYS), today)
+      : await loadActivitiesOrNull(user, addDays(today, -MATCH_LOOKBACK_DAYS), today, patternOf(goal))
   const matched = await matchRecent(goal, today, recent)
   await scheduleHorizon(user, goal, today)
   const adjustments = await adaptMorning(user, goal, today)

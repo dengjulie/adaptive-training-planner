@@ -5,6 +5,7 @@ import { csrf } from 'hono/csrf'
 import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
 import { secureHeaders } from 'hono/secure-headers'
+import { demoRoutes } from './demo/routes.ts'
 import { appOrigin, isProduction } from './env.ts'
 import { corosRoutes } from './integrations/coros/routes.ts'
 import { googleRoutes } from './integrations/google/routes.ts'
@@ -35,6 +36,7 @@ app.route('/', googleRoutes)
 app.route('/', ouraRoutes)
 app.route('/', corosRoutes)
 app.route('/', planRoutes)
+app.route('/', demoRoutes)
 
 if (isProduction) {
   // Serve the built web app and fall back to index.html for client-side routes.

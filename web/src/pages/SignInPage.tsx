@@ -20,6 +20,12 @@ export function SignInPage() {
         Signing in also connects a dedicated “Training” calendar. The app only reads free/busy
         times from your other calendars and never writes to them.
       </p>
+      {import.meta.env.DEV && (
+        <p className="muted small">
+          Developing? <a href="/auth/demo">Use the demo account</a>: synthetic data only (start the
+          API with DEMO_MODE=true after npm run db:seed:demo).
+        </p>
+      )}
     </main>
   )
 }
