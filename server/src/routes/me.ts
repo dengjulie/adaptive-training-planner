@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
+import { aiEnabled } from '../ai/client.ts'
 import { providerEnum, type Provider } from '../db/schema.ts'
 import { corosIntegration } from '../integrations/coros/index.ts'
 import { googleIntegration } from '../integrations/google/index.ts'
@@ -20,6 +21,7 @@ export const meRoutes = new Hono<AppEnv>()
     const rows = await listConnections(user.id)
     return c.json({
       user: { id: user.id, email: user.email, timezone: user.timezone },
+      features: { aiGoalIntake: aiEnabled },
       integrations: Object.values(integrations).map(({ provider, label, configured }) => {
         const connection = rows.find((row) => row.provider === provider)
         return {

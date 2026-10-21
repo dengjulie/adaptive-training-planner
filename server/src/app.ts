@@ -20,6 +20,7 @@ import {
 import { OAuthCallbackError, redirectToApp } from './lib/oauth-state.ts'
 import { requireUser, type AppEnv } from './lib/session.ts'
 import { planRoutes } from './plan/routes.ts'
+import { aiRoutes } from './routes/ai.ts'
 import { meRoutes } from './routes/me.ts'
 
 export const app = new Hono<AppEnv>()
@@ -36,6 +37,7 @@ app.route('/', googleRoutes)
 app.route('/', ouraRoutes)
 app.route('/', corosRoutes)
 app.route('/', planRoutes)
+app.route('/', aiRoutes)
 app.route('/', demoRoutes)
 
 if (isProduction) {
