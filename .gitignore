@@ -1,0 +1,19 @@
+node_modules
+dist
+*.tsbuildinfo
+coverage
+
+# Secrets: OAuth client secrets, session and token-encryption keys
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
