@@ -32,6 +32,11 @@ const EnvSchema = z.object({
   COROS_MCP_URL: z.url().default('https://mcpus.coros.com/mcp'),
   COROS_REDIRECT_URI: z.url().optional(),
 
+  // AI goal intake (src/ai/). Off without a key. It only ever sees the user's own words and their
+  // COROS training volume, never Oura data (CLAUDE.md).
+  ANTHROPIC_API_KEY: z.string().optional(),
+  ANTHROPIC_MODEL: z.string().default('claude-opus-5-5'),
+
   // Development only: enables /auth/demo and synthetic COROS runs for the demo user that
   // `npm run db:seed:demo` creates, so the app can be tried without real accounts or data.
   DEMO_MODE: z.stringbool().default(false),
