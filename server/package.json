@@ -11,7 +11,8 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "job:daily": "node --env-file-if-exists=../.env src/jobs/daily.ts"
   },
   "dependencies": {
     "@googleapis/calendar": "^20.1.0",
