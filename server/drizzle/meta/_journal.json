@@ -15,6 +15,13 @@
       "when": 1791745652451,
       "tag": "0001_oura_records",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792097355964,
+      "tag": "0002_plan",
+      "breakpoints": true
     }
   ]
 }

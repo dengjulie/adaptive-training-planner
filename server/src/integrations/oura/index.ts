@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { db } from '../../db/client.ts'
-import { connections, ouraDaily, ouraRecords } from '../../db/schema.ts'
+import { connections, ouraDaily, ouraRecords, planAdjustments } from '../../db/schema.ts'
 import { ouraOAuth } from '../../env.ts'
 import { getConnection } from '../../lib/connections.ts'
 import type { Integration } from '../types.ts'
@@ -22,6 +22,8 @@ export const ouraIntegration: Integration = {
       await tx.select({ id: connections.id }).from(connections).where(ouraConnection).for('update')
       await tx.delete(ouraDaily).where(eq(ouraDaily.userId, userId))
       await tx.delete(ouraRecords).where(eq(ouraRecords.userId, userId))
+      // Readiness changes to the plan are Oura-derived too; sessions fall back to their base.
+      await tx.delete(planAdjustments).where(eq(planAdjustments.userId, userId))
       await tx.delete(connections).where(ouraConnection)
     })
   },

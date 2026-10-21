@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import {
   date,
   index,
@@ -12,6 +13,11 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core'
+import type { CorosBaseline } from '../plan/baseline.ts'
+import type { PlanWeek } from '../plan/generate.ts'
+import type { TimeWindow } from '../plan/goal.ts'
+import { RACE_DISTANCES } from '../plan/goal.ts'
+import { PHASES, SESSION_KINDS, SESSION_STATUSES } from '../plan/sessions.ts'
 
 const timestamps = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -144,8 +150,106 @@ export const ouraRecords = pgTable(
   (t) => [primaryKey({ columns: [t.userId, t.collection, t.recordId] }), index().on(t.userId, t.day)],
 )
 
+export const raceDistanceEnum = pgEnum('race_distance', RACE_DISTANCES)
+export const goalStatusEnum = pgEnum('goal_status', ['active', 'replaced'])
+export const sessionKindEnum = pgEnum('session_kind', SESSION_KINDS)
+export const planPhaseEnum = pgEnum('plan_phase', PHASES)
+export const sessionStatusEnum = pgEnum('session_status', SESSION_STATUSES)
+export const slotStatusEnum = pgEnum('slot_status', ['pending', 'scheduled', 'no_slot'])
+
+/** A race goal and the plan built for it. A user has at most one active goal. */
+export const goals = pgTable(
+  'goals',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    status: goalStatusEnum().notNull().default('active'),
+    raceDistance: raceDistanceEnum().notNull(),
+    raceDate: date({ mode: 'string' }).notNull(),
+    // When the user can train: one window per training weekday (0 = Monday), local time.
+    timeWindows: jsonb().$type<TimeWindow[]>().notNull(),
+    longRunWeekday: integer().notNull(),
+    // The first day of the plan and its weeks, as plan/generate.ts built them.
+    startDay: date({ mode: 'string' }).notNull(),
+    weeks: jsonb().$type<PlanWeek[]>().notNull(),
+    // Weekly running volume from COROS the plan started from (aggregates, not workouts); null
+    // when COROS wasn't connected.
+    baseline: jsonb().$type<CorosBaseline>(),
+    calendarSyncedAt: timestamp({ withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex().on(t.userId).where(sql`${t.status} = 'active'`)],
+)
+
+/**
+ * The base plan: sessions as the goal, COROS history, and calendar made them. Nothing in these
+ * rows comes from Oura; readiness changes live in plan_adjustments.
+ */
+export const plannedSessions = pgTable(
+  'planned_sessions',
+  {
+    // Also the Training calendar event's trainSmarterSessionId.
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    goalId: uuid()
+      .notNull()
+      .references(() => goals.id, { onDelete: 'cascade' }),
+    day: date({ mode: 'string' }).notNull(),
+    weekIndex: integer().notNull(),
+    phase: planPhaseEnum().notNull(),
+    baseKind: sessionKindEnum().notNull(),
+    baseMinutes: integer().notNull(),
+    status: sessionStatusEnum().notNull().default('planned'),
+    // The COROS activity that completed the session and how long it took; null for a manual tap.
+    activityId: text(),
+    actualMinutes: integer(),
+    slotStatus: slotStatusEnum().notNull().default('pending'),
+    startAt: timestamp({ withTimezone: true }),
+    endAt: timestamp({ withTimezone: true }),
+    // SHA-256 of what the calendar event last showed, so unchanged events aren't rewritten. The
+    // event shows the adjusted session, so treat this like plan_adjustments: never AI input.
+    calendarEventHash: text(),
+    ...timestamps,
+  },
+  (t) => [index().on(t.userId, t.day), index().on(t.goalId)],
+)
+
+/**
+ * The Oura overlay: what the readiness rules (plan/adapt.ts) changed. Oura-derived, so it follows
+ * Oura data: purged with the retention window, deleted when Oura is disconnected (sessions then
+ * fall back to their base), and never sent to an AI model or written to the calendar as text.
+ */
+export const planAdjustments = pgTable(
+  'plan_adjustments',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    sessionId: uuid()
+      .notNull()
+      .references(() => plannedSessions.id, { onDelete: 'cascade' }),
+    // The morning the rule fired. Re-running a morning replaces its rows.
+    decidedOn: date({ mode: 'string' }).notNull(),
+    ruleId: text().notNull(),
+    kind: sessionKindEnum().notNull(),
+    minutes: integer().notNull(),
+    // From a fixed template; it quotes readiness values.
+    reason: text().notNull(),
+    createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index().on(t.userId, t.decidedOn), index().on(t.sessionId)],
+)
+
 export type User = typeof users.$inferSelect
 export type Connection = typeof connections.$inferSelect
 export type Provider = (typeof providerEnum.enumValues)[number]
 export type OuraDaily = typeof ouraDaily.$inferSelect
 export type OuraRecord = typeof ouraRecords.$inferSelect
+export type GoalRow = typeof goals.$inferSelect
+export type PlannedSession = typeof plannedSessions.$inferSelect
+export type PlanAdjustment = typeof planAdjustments.$inferSelect

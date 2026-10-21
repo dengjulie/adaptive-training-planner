@@ -18,6 +18,7 @@ import {
 } from './lib/errors.ts'
 import { OAuthCallbackError, redirectToApp } from './lib/oauth-state.ts'
 import { requireUser, type AppEnv } from './lib/session.ts'
+import { planRoutes } from './plan/routes.ts'
 import { meRoutes } from './routes/me.ts'
 
 export const app = new Hono<AppEnv>()
@@ -33,6 +34,7 @@ app.route('/', meRoutes)
 app.route('/', googleRoutes)
 app.route('/', ouraRoutes)
 app.route('/', corosRoutes)
+app.route('/', planRoutes)
 
 if (isProduction) {
   // Serve the built web app and fall back to index.html for client-side routes.

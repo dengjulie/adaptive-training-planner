@@ -1,7 +1,7 @@
 import { and, asc, eq, lt, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { db, type Transaction } from '../../db/client.ts'
-import { connections, ouraDaily, type User } from '../../db/schema.ts'
+import { connections, ouraDaily, planAdjustments, type User } from '../../db/schema.ts'
 import { markReauthRequired, updateConnectionMetadata } from '../../lib/connections.ts'
 import { addDays, todayIn, type IsoDate } from '../../lib/dates.ts'
 import { MissingScopeError } from '../../lib/errors.ts'
@@ -251,6 +251,9 @@ export async function purgeExpiredOuraData(user: User) {
     .delete(ouraDaily)
     .where(and(eq(ouraDaily.userId, user.id), lt(ouraDaily.day, oldestKept)))
   await deleteRecordsBefore(user.id, oldestKept)
+  await db
+    .delete(planAdjustments)
+    .where(and(eq(planAdjustments.userId, user.id), lt(planAdjustments.decidedOn, oldestKept)))
 }
 
 /** Every day stored for the user, oldest first. */
