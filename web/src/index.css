@@ -1189,3 +1189,64 @@ p.readiness-strip {
 .calendar-status {
   margin: 0;
 }
+
+.goal-chat {
+  margin-bottom: 1rem;
+}
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.chat-message {
+  max-width: 85%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  white-space: pre-wrap;
+}
+
+.chat-message.user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.chat-message.assistant {
+  align-self: flex-start;
+  background: var(--bg);
+}
+
+.chat-input {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-top: 0.75rem;
+}
+
+.chat-input textarea {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+  resize: vertical;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -13,6 +13,7 @@ export type IntegrationSummary = {
 
 export type Me = {
   user: { id: string; email: string; timezone: string }
+  features: { aiGoalIntake: boolean }
   integrations: IntegrationSummary[]
 }
 
