@@ -718,3 +718,197 @@ pre {
   stroke-width: 3;
   paint-order: stroke;
 }
+
+/* Oura data and day pages */
+.oura-section {
+  margin-top: 2rem;
+}
+
+.oura-section > h2 {
+  margin-bottom: 0.75rem;
+}
+
+.oura-section > .small {
+  margin: 0.75rem 0 0;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
+  gap: 1rem;
+}
+
+.chart-card {
+  min-width: 0;
+}
+
+.chart-card.wide {
+  grid-column: 1 / -1;
+}
+
+.chart-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Card titles read as titles, not as the small uppercase labels panels use. */
+.chart-card-header h3,
+.card-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+.card-title {
+  margin-bottom: 0.5rem;
+}
+
+.chart-card-header p {
+  margin: 0;
+}
+
+.chart-card .chart-key {
+  margin: 0 0 0.5rem;
+}
+
+.readout {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.readout strong {
+  font-weight: 650;
+}
+
+.readout a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.readout a:hover {
+  text-decoration: underline;
+}
+
+.card h4 {
+  margin: 1rem 0 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Lets dt and dd pairs wrapped in a div still line up in the facts grid. */
+.facts .fact {
+  display: contents;
+}
+
+.cards.two {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+.cards.three {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+.contributor-values {
+  margin: 0.5rem 0 0;
+}
+
+.meters {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+}
+
+.meters li {
+  display: grid;
+  grid-template-columns: minmax(0, 9.5rem) 1fr 2rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.meter {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--chart-band);
+  overflow: hidden;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--chart-line);
+}
+
+.meter-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-chart {
+  min-width: 0;
+  border-radius: 6px;
+}
+
+.time-chart:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.time-chart svg {
+  display: block;
+  overflow: visible;
+  touch-action: pan-y;
+}
+
+.time-chart .readout {
+  min-height: 1.4em;
+}
+
+.time-span {
+  fill: var(--chart-band);
+}
+
+.time-chart .time-span-label {
+  font-size: 10px;
+}
+
+.heatmap-focus {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+
+.day-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.day-header h1 {
+  margin: 0;
+}
+
+.day-header .actions {
+  margin-top: 0;
+}
+
+.raw-data {
+  margin-top: 2rem;
+}
+
+.raw-data h3 {
+  margin-top: 1rem;
+}

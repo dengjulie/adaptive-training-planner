@@ -33,6 +33,8 @@ export function Layout() {
       <header className="topbar">
         <span className="brand">Train Smarter</span>
         <nav className="nav">
+          <NavLink to="/recovery">Recovery</NavLink>
+          <NavLink to="/oura">Oura data</NavLink>
           <NavLink to="/connections">Connections</NavLink>
         </nav>
         <div className="account">
