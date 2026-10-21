@@ -912,3 +912,280 @@ pre {
 .raw-data h3 {
   margin-top: 1rem;
 }
+
+/* Plan page */
+
+.actions.tight {
+  margin-top: 0;
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+.link-button:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+.ok-text {
+  color: var(--ok);
+}
+
+.warn-text {
+  color: var(--warn);
+}
+
+.today-session {
+  margin-top: 0.75rem;
+}
+
+.today-session p {
+  margin: 0;
+}
+
+.today-session .was {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.today-session .now {
+  font-size: 1.5rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.adjustment-reason {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: 0.875rem;
+}
+
+.adjustment-reason .icon {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.readiness-strip {
+  display: grid;
+  grid-template-columns: minmax(6rem, 10rem) 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+p.readiness-strip {
+  display: block;
+  margin-bottom: 0;
+}
+
+.readiness-strip p {
+  margin: 0;
+}
+
+.week-header {
+  flex-wrap: wrap;
+}
+
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.week-nav p,
+.week-totals {
+  margin: 0;
+}
+
+.week-nav .button {
+  padding: 0.3rem 0.65rem;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 7rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.day-cell p {
+  margin: 0;
+}
+
+.day-cell.today {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.day-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.day-name abbr {
+  text-decoration: none;
+}
+
+.session-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border-left: 3px solid var(--plan-light-week);
+  background: var(--surface);
+  font-size: 0.8125rem;
+}
+
+.session-chip.hard {
+  border-left-color: var(--plan-week);
+}
+
+.session-chip.rest {
+  border-left-color: var(--border);
+}
+
+.session-chip.missed,
+.day-cell.past .session-chip.planned {
+  opacity: 0.7;
+}
+
+.session-chip .session-kind {
+  font-weight: 600;
+}
+
+.session-chip .small {
+  font-size: 0.75rem;
+}
+
+.session-chip .adjusted {
+  color: var(--warn);
+}
+
+.session-chip .link-button {
+  align-self: flex-start;
+}
+
+@media (max-width: 640px) {
+  .week-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .day-cell {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    align-items: start;
+    min-height: 0;
+  }
+}
+
+.readout {
+  margin: 0.75rem 0 1.25rem;
+}
+
+.phase-strip {
+  display: flex;
+  gap: 2px;
+  margin: 0.75rem 0 1rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.phase-strip li {
+  flex-basis: 0;
+  min-width: 0;
+  padding: 0.25rem 0.5rem;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--bg);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goal-form fieldset {
+  margin: 0 0 1.25rem;
+  padding: 0;
+  border: 0;
+}
+
+.goal-form legend {
+  margin-bottom: 0.5rem;
+  font-weight: 650;
+}
+
+.goal-form fieldset > p {
+  margin: 0 0 0.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.goal-form input[type='date'],
+.goal-form input[type='time'],
+.goal-form textarea {
+  max-width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.field input {
+  align-self: flex-start;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.availability td {
+  vertical-align: middle;
+}
+
+.calendar-status {
+  margin: 0;
+}
