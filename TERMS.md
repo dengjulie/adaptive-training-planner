@@ -2,7 +2,7 @@
 
 **Train Smarter** · Last updated: October 9, 2026
 
-These terms cover your use of Train Smarter, a free, personal training planner run by [Your name] ("I"). By signing in, you agree to them. If you don't agree, don't use the app.
+These terms cover your use of Train Smarter, a free, personal training planner run by Julie Deng ("I"). By signing in, you agree to them. If you don't agree, don't use the app.
 
 ## What the app does
 
@@ -57,4 +57,4 @@ If these terms change, the date at the top changes too. If a change is significa
 
 ## Contact
 
-[Your name] · [contact email]
+Julie Deng · julie.li.deng@gmail.com
